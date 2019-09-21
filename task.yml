@@ -1,0 +1,59 @@
+- name: Lab Setup
+  hosts: SDCMTLabOne
+  become: yes
+  become_method: sudo
+  remote_user: sdcmt
+  tasks:
+
+#for backup - if office is not installed due to any error, LAB technician can do it manually
+	- name: Download wps-office.deb
+	  get_url:
+	    url: http://192.168.13.19:8000/wps-office_11.1.0.8392_i386.deb
+	    dest: /home/sdcmt/kamil/wps-office_11.1.0.8392_i386.deb
+    	mode: '0777'
+
+#for backup - if java is not installed due to any error, LAB technician can do it manually 
+	- name: Download JDK.deb
+	  get_url:
+	    url: http://192.168.13.19:8000/openjdk-9-jdk.deb
+	    dest: /home/sdcmt/kamil/openjdk-9-jdk.deb
+    	mode: '0777'
+
+
+   - name: Installing httpd
+     apt: 
+      name=apache2
+      state=present            #installed was showing the error
+                                   # [DEPRECATION WARNING] ":" State 'installed' is deprecated. Using state 'present' instead.. feature will be removed in version 2.9. 
+#Deprecation warnings can be disabled by setting deprecation_warnings=False in ansible.cfg.
+
+#it sets mysql password before installation
+   - name: Mysql | Set root password
+     debconf: name='mysql-server' question='mysql-server/root_password' value='root}' vtype='password'
+
+   - name: Mysql | Set root repassword
+     debconf: name='mysql-server' question='mysql-server/root_password_again' value='root' vtype='password'
+     
+
+   - name: Installing mysql
+     apt: 
+      pkg=mysql-server
+      update_cache=true
+      state=present
+
+
+   - name: Installing Java
+     apt:
+      pkg=openjdk-9-jdk
+      update_cache=true
+      state=present
+
+
+
+   - name: Installing WPS Office
+     apt: 
+      pkg=wps-office
+      update_cache=true
+      state=present
+
+
