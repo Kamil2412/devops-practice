@@ -5,3 +5,7 @@ Command
 ```
   firejail --noprofile ansible-playbook -i /root/ansible/hosts task.yml --ask-become-pass
 ```
+
+Screenshot
+
+![sample screenshots](Screenshot.png)
